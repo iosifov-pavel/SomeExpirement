@@ -17,6 +17,8 @@ public class Area
     Vector2Int endPosition;
     Vector2Int size;
     Room roomInArea = null;
+    int randomConstraintsMulitiplier = 9;
+    int divideChanceReducer = 3;
 
     public void InitArea(Vector2Int startPoint, Vector2Int endPoint, int chanceToNotDivide )
     {
@@ -49,7 +51,7 @@ public class Area
             start.x = startPosition.x;
             end.x = startPosition.x + size.x;
             int half = (startPosition.y + endPosition.y) / 2;
-            start.y = uRandom.Range(half-size.y/9, half + size.y /9);
+            start.y = uRandom.Range(half-size.y/ randomConstraintsMulitiplier, half + size.y / randomConstraintsMulitiplier);
             end.y = start.y;
         }
         else
@@ -57,7 +59,7 @@ public class Area
             start.y = startPosition.y;
             end.y = startPosition.y + size.y;
             int half = (startPosition.x + endPosition.x) / 2;
-            start.x = uRandom.Range(half - size.x /9, half + size.x /9);
+            start.x = uRandom.Range(half - size.x / randomConstraintsMulitiplier, half + size.x / randomConstraintsMulitiplier);
             end.x = start.x;
         }
         Vector3 startLine = new Vector3(start.x, start.y, 0);
@@ -65,8 +67,8 @@ public class Area
         Debug.DrawLine(startLine, endLine, Color.red, 50000f);
         Area child1 = new Area();
         Area child2 = new Area();
-        child1.InitArea(startPosition, end, noDividePercent - 5);
-        child2.InitArea(start, endPosition, noDividePercent - 5);
+        child1.InitArea(startPosition, end, noDividePercent - divideChanceReducer);
+        child2.InitArea(start, endPosition, noDividePercent - divideChanceReducer);
         return new Area[] { child1, child2 };
     }
 

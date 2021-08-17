@@ -24,7 +24,7 @@ public class Generation : MonoBehaviour
     public void DrawTiles()
     {
         int[,] levelMap = currentLevel.GetLevelMap();
-        Tile tile = new Tile();
+        Tile tile = ScriptableObject.CreateInstance<Tile>();
         Vector3Int pos = new Vector3Int(0, 0, 0);
         tile.sprite = test;
         for(int x = 0; x < mapSize.x; x++)

@@ -6,6 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class Floor
 {
+    public static Floor Instance = null;
     public Vector2Int LevelSize { get; set; }
     [SerializeField] List<Area> allAreas= new List<Area>();
     [SerializeField] List<Area> areasCapableForRoom = new List<Area>();
@@ -15,6 +16,7 @@ public class Floor
 
     public void InitFloor(Vector3Int mapSize)
     {
+        Instance = this;
         LevelSize = new Vector2Int(mapSize.x, mapSize.y);
         map = new int[mapSize.x, mapSize.y];
     }
@@ -56,20 +58,38 @@ public class Floor
     {
         foreach(Area area in areasCapableForRoom)
         {
-            rooms.Add(area.CreateRoom());
+            Room room = area.CreateRoom();
+            room.SetID(areasCapableForRoom.IndexOf(area));
+            rooms.Add(room);
         }
+
     }
 
     public void GenerateCoridors()
     {
-
+        foreach (Room room in rooms)
+        {
+            room.Neighbors();
+        }
+        List<Coridor> newCoridors = new List<Coridor>();
+        foreach(Coridor cor in coridors)
+        {
+            bool alreadyHas = false;
+            foreach(Coridor cor2 in newCoridors)
+            {
+                if (cor.Equality(cor2)) { alreadyHas = true; break; }
+            }
+            if (alreadyHas) {continue;}
+            newCoridors.Add(cor);
+            coridors = new List<Coridor>(newCoridors);
+        }
     }
 
     public void CompleteLevelMap()
     {
         foreach (Room room in rooms)
         {
-            Vector2Int roomPosition = room.StartPosition;
+            Vector2Int roomPosition = room.GetStartPosition();
             int[,] roomMap = room.GetRoomMap();
             for (int i = 0; i < roomMap.GetUpperBound(0); i++)
                 for (int j = 0; j < roomMap.GetUpperBound(1); j++)
@@ -87,5 +107,15 @@ public class Floor
     public int[,] GetLevelMap()
     {
         return map;
+    }
+
+    public List<Room> GetRooms()
+    {
+        return rooms;
+    }
+
+    public List<Coridor> GetCoridors()
+    {
+        return coridors;
     }
 }
